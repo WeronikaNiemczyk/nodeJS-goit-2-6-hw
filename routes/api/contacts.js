@@ -4,9 +4,9 @@ const router = express.Router();
 const contacts = require("../../models/contacts");
 
 const schema = Joi.object({
-  name: Joi.string().min(3).max(20),
-  email: Joi.string().email({ minDomainSegments: 2 }),
-  phone: Joi.string().min(9),
+  name: Joi.string().min(3).max(20).required(),
+  email: Joi.string().email({ minDomainSegments: 2 }).required(),
+  phone: Joi.string().min(9).required(),
 });
 
 router.get("/", async (req, res, next) => {

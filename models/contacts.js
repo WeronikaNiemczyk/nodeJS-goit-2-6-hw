@@ -12,7 +12,8 @@ const listContacts = async () => {
     console.log(err);
     res.json({
       message:
-        err.message || "Something went wrong when trying to get contact list.",
+        err.message ||
+        "Something went wrong when trying to get contact list.",
     });
   }
 };
