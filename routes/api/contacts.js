@@ -47,10 +47,6 @@ router.post("/", async (req, res, next) => {
       return res.status(400).send(error.details[0].message);
     }
 
-    if (!name || !email || !phone) {
-      return res.status(400).json({ message: "missing required name - field" });
-    }
-
     const newContact = await contacts.addContact({ name, email, phone });
     res.status(201).json(newContact);
   } catch (err) {
