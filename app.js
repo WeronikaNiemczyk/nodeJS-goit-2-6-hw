@@ -21,7 +21,9 @@ app.use((req, res) => {
 });
 
 app.use((err, req, res, next) => {
-  res.status(500).json({ message: "Something broke" });
+  res.status(500).json({
+    message: err.message || "Something broke",
+  });
 });
 
 const connection = mongoose.connect(urlDb);
@@ -33,11 +35,6 @@ const startServer = async () => {
     app.listen(3000, () => {
       console.log("server is runing");
     });
-    // const collections = await mongoose.connection.db.collections();
-    // console.log(
-    //   "Collections:",
-    //   collections.map((c) => c.collectionName)
-    // );
   } catch (error) {
     console.log(error);
     process.exit(1);

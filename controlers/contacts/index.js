@@ -7,7 +7,7 @@ const {
   deleteContact,
   updateFavorite,
 } = require("./services");
-const { findByIdAndDelete } = require("../../models/contacts-models");
+
 
 const schema = Joi.object({
   name: Joi.string().min(3).max(20).required(),
