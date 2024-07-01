@@ -1,17 +1,104 @@
-const { fetchContacts, fetchContact } = require("./services");
+const Joi = require("joi");
+const {
+  fetchContacts,
+  fetchContact,
+  insertContact,
+  putContact,
+  deleteContact,
+  updateFavorite,
+} = require("./services");
+const { findByIdAndDelete } = require("../../models/contacts-models");
 
-const getAllContacts = async (req, res) => {
-  const contacts = await fetchContacts();
+const schema = Joi.object({
+  name: Joi.string().min(3).max(20).required(),
+  email: Joi.string().email({ minDomainSegments: 2 }).required(),
+  phone: Joi.string().min(9).required(),
+});
 
-  res.json(contacts);
+const getAllContacts = async (req, res, next) => {
+  try {
+    const contacts = await fetchContacts();
+    res.json(contacts);
+  } catch (err) {
+    next(err);
+  }
 };
 
-const getContactById = async (req, res) => {
-  const contact = await fetchContact(req.params.contactId);
+const getContactById = async (req, res, next) => {
+  try {
+    const contact = await fetchContact(req.params.contactId);
+    if (contact) {
+      res.json(contact);
+    } else {
+      next();
+    }
+  } catch (err) {
+    next(err);
+  }
+};
 
-  res.json(contact);
+const addContact = async (req, res, next) => {
+  const { name, email, phone } = req.body;
+  const { error } = schema.validate(req.body);
+  if (error) {
+    return res.status(400).send(error.details[0].message);
+  }
+  const result = await insertContact({
+    name,
+    email,
+    phone,
+  });
+  res.status(201).json(result);
+  try {
+  } catch (err) {
+    next(err);
+  }
+};
+const updateContact = async (req, res, next) => {
+  const { contactId } = req.params;
+  try {
+    const result = await putContact({
+      contactId,
+      toUpdate: req.body,
+      upsert: true,
+    });
+    res.json(result);
+  } catch (err) {
+    next(err);
+  }
+};
+
+const removeContact = async (req, res, next) => {
+  const { contactId } = req.params;
+
+  try {
+    await deleteContact(contactId);
+    res.status(204).send({ message: "Task deleted" });
+  } catch (err) {
+    next(err);
+  }
+};
+const addToFavorite = async (req, res, next) => {
+  const { contactId } = req.params;
+  const { favorite } = req.body;
+  if (favorite === undefined) {
+    return res.status(400).json({ message: "missing field favorite" });
+  }
+  try {
+    const result = await updateFavorite(contactId, { favorite });
+    if (!result) {
+      return res.status(404).json({ message: "Not found" });
+    }
+    res.status(200).json(result);
+  } catch (err) {
+    next(err);
+  }
 };
 module.exports = {
   getAllContacts,
   getContactById,
+  addContact,
+  updateContact,
+  removeContact,
+  addToFavorite,
 };
