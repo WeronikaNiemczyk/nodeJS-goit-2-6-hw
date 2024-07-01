@@ -1,24 +1,21 @@
-// const Joi = require("joi");
+const Joi = require("joi");
 const express = require("express");
 const router = express.Router();
 // const contacts = require("../../models/contacts");
 const Contact = require("../../models/contacts-models");
 
-// const schema = Joi.object({
-//   name: Joi.string().min(3).max(20).required(),
-//   email: Joi.string().email({ minDomainSegments: 2 }).required(),
-//   phone: Joi.string().min(9).required(),
-// });
-router.get("/", async (req, res, next) => {
-  try {
-    const contacts = await Contact.find();
-    console.log("Fetched contacts:", contacts);
-    res.json(contacts);
-  } catch (error) {
-    console.error("Error fetching contacts:", error);
-    res.status(500).json({ message: "Failed to fetch contacts" });
-  }
+const schema = Joi.object({
+  name: Joi.string().min(3).max(20).required(),
+  email: Joi.string().email({ minDomainSegments: 2 }).required(),
+  phone: Joi.string().min(9).required(),
 });
+router.get("/", async (req, res) => {
+  console.log("GET /api/contacts called"); // Dodane logowanie
+  const contacts = await Contact.find();
+  console.log("Fetched contacts:", contacts); // Dodane logowanie
+  res.json(contacts);
+});
+
 // router.get("/", async (req, res, next) => {
 //   try {
 //     const data = await contacts.listContacts();
