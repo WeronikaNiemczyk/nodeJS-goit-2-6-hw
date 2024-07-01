@@ -1,18 +1,20 @@
-const Joi = require("joi");
 const express = require("express");
 const router = express.Router();
 const {
   getAllContacts,
   getContactById,
+  addContact,
+  updateContact,
+  removeContact,
+  addToFavorite,
 } = require("../../controlers/contacts/index");
 
-const schema = Joi.object({
-  name: Joi.string().min(3).max(20).required(),
-  email: Joi.string().email({ minDomainSegments: 2 }).required(),
-  phone: Joi.string().min(9).required(),
-});
 router.get("/", getAllContacts);
 router.get("/:contactId", getContactById);
+router.post("/", addContact);
+router.put("/:contactId", updateContact);
+router.delete("/:contactId", removeContact);
+router.patch("/:contactId/favorite", addToFavorite);
 
 // router.get("/", async (req, res, next) => {
 //   try {
