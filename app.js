@@ -33,11 +33,11 @@ const startServer = async () => {
     app.listen(3000, () => {
       console.log("server is runing");
     });
-    const collections = await mongoose.connection.db.collections();
-    console.log(
-      "Collections:",
-      collections.map((c) => c.collectionName)
-    );
+    // const collections = await mongoose.connection.db.collections();
+    // console.log(
+    //   "Collections:",
+    //   collections.map((c) => c.collectionName)
+    // );
   } catch (error) {
     console.log(error);
     process.exit(1);

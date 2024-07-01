@@ -1,20 +1,18 @@
 const Joi = require("joi");
 const express = require("express");
 const router = express.Router();
-// const contacts = require("../../models/contacts");
-const Contact = require("../../models/contacts-models");
+const {
+  getAllContacts,
+  getContactById,
+} = require("../../controlers/contacts/index");
 
 const schema = Joi.object({
   name: Joi.string().min(3).max(20).required(),
   email: Joi.string().email({ minDomainSegments: 2 }).required(),
   phone: Joi.string().min(9).required(),
 });
-router.get("/", async (req, res) => {
-  console.log("GET /api/contacts called"); // Dodane logowanie
-  const contacts = await Contact.find();
-  console.log("Fetched contacts:", contacts); // Dodane logowanie
-  res.json(contacts);
-});
+router.get("/", getAllContacts);
+router.get("/:contactId", getContactById);
 
 // router.get("/", async (req, res, next) => {
 //   try {
