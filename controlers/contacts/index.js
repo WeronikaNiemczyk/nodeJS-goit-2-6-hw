@@ -8,11 +8,14 @@ const {
   updateFavorite,
 } = require("./services");
 
-
 const schema = Joi.object({
   name: Joi.string().min(3).max(20).required(),
   email: Joi.string().email({ minDomainSegments: 2 }).required(),
   phone: Joi.string().min(9).required(),
+  favorite: Joi.boolean,
+});
+const schemaFav = Joi.object({
+  favorite: Joi.boolean().required(),
 });
 
 const getAllContacts = async (req, res, next) => {
@@ -56,6 +59,10 @@ const addContact = async (req, res, next) => {
 };
 const updateContact = async (req, res, next) => {
   const { contactId } = req.params;
+  const { error } = schema.validate(req.body);
+  if (error) {
+    return res.status(400).send(error.details[0].message);
+  }
   try {
     const result = await putContact({
       contactId,
@@ -81,6 +88,10 @@ const removeContact = async (req, res, next) => {
 const addToFavorite = async (req, res, next) => {
   const { contactId } = req.params;
   const { favorite } = req.body;
+  const { error } = schemaFav.validate(req.body);
+  if (error) {
+    return res.status(400).send(error.details[0].message);
+  }
   if (favorite === undefined) {
     return res.status(400).json({ message: "missing field favorite" });
   }
