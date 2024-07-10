@@ -2,7 +2,9 @@ const express = require("express");
 const logger = require("morgan");
 const cors = require("cors");
 const mongoose = require("mongoose");
-
+const { setJWTStrategy, jwt } = require("./config/jwt");
+const middleware = require("./middleware/jwt");
+const contactsRouter = require("./routes/api/contacts");
 require("dotenv").config();
 
 const { DB_HOST: urlDb } = process.env;
@@ -13,7 +15,8 @@ app.use(logger(formatsLogger));
 app.use(cors());
 app.use(express.json());
 
-const contactsRouter = require("./routes/api/contacts");
+setJWTStrategy();
+
 app.use("/api/contacts", contactsRouter);
 
 app.use((req, res) => {
