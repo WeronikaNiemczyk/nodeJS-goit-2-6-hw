@@ -3,7 +3,6 @@ const logger = require("morgan");
 const cors = require("cors");
 const mongoose = require("mongoose");
 const { setJWTStrategy, jwt } = require("./config/jwt");
-const salt = require("./salt");
 const middleware = require("./middleware/jwt");
 const contactsRouter = require("./routes/api/contacts");
 require("dotenv").config();

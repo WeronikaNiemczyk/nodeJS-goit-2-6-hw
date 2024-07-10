@@ -14,7 +14,7 @@ const setJWTStrategy = () => {
     new JWTStrategy(params, async function (payload, done) {
       try {
         const user = await Users.findOne({ _id: payload.id }).lean();
-        if (user) {
+        if (!user) {
           return done(new Error("User not found"));
         }
         return done(null, user);
