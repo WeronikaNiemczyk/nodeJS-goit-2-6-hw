@@ -10,6 +10,7 @@ const {
 } = require("./services");
 const Users = require("../../models/users-models");
 const bcrypt = require("bcrypt");
+const gravatar = require("gravatar");
 
 const schema = Joi.object({
   name: Joi.string().min(3).max(20).required(),
@@ -50,10 +51,12 @@ const userSignup = async (req, res, next) => {
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
+    const url = gravatar.url(email, { s: "200", r: "pg", d: "404" });
     const newUser = new Users({
       email,
       password: hashedPassword,
       subscription,
+      avatarURL: url,
     });
 
     await newUser.save();
@@ -61,6 +64,7 @@ const userSignup = async (req, res, next) => {
       user: {
         email: newUser.email,
         subscription: newUser.subscription,
+        avatarURL: url,
       },
     });
   } catch (err) {
