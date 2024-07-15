@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const { authMiddleware } = require("../../middleware/jwt");
-
+const { updateAvatar } = require("../../tmp/temp-storage");
 const {
   getAllContacts,
   getContactById,
@@ -14,6 +14,7 @@ const {
   userLogout,
   currentUser,
 } = require("../../controlers/contacts/index");
+const { uploadTemp } = require("../../tmp/temp-storage");
 
 router.get("/", authMiddleware, getAllContacts);
 router.get("/:contactId", authMiddleware, getContactById);
@@ -25,5 +26,11 @@ router.post("/users/signup", userSignup);
 router.post("/users/login", userLogin);
 router.get("/users/logout", authMiddleware, userLogout);
 router.get("/users/current", authMiddleware, currentUser);
+router.patch(
+  "/users/avatars",
+  authMiddleware,
+  uploadTemp.single("picture"),
+  updateAvatar
+);
 
 module.exports = router;

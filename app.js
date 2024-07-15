@@ -4,6 +4,7 @@ const cors = require("cors");
 const mongoose = require("mongoose");
 const { setJWTStrategy, jwt } = require("./config/jwt");
 const middleware = require("./middleware/jwt");
+const tempStorage = require("./tmp/temp-storage");
 const contactsRouter = require("./routes/api/contacts");
 require("dotenv").config();
 
