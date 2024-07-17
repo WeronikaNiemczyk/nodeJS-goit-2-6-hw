@@ -75,8 +75,10 @@ const userSignup = async (req, res, next) => {
     next(err);
   }
 };
+
 const updateAvatar = async (req, res) => {
-  const avatarsPath = path.join(__dirname, "../public/avatars");
+  const avatarsPath = path.join(__dirname, "../../tmp");
+
   if (!req.file) {
     return res.status(400).json({ message: "No file uploaded." });
   }
