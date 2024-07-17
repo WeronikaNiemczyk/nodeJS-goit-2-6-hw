@@ -4,7 +4,7 @@ const cors = require("cors");
 const mongoose = require("mongoose");
 const { setJWTStrategy, jwt } = require("./config/jwt");
 const middleware = require("./middleware/jwt");
-const contactsRouter = require("./routes/api/contacts");
+const { contactsRouter, userRouter } = require("./routes/api/contacts");
 require("dotenv").config();
 
 const { DB_HOST: urlDb } = process.env;
@@ -18,6 +18,7 @@ app.use(express.json());
 setJWTStrategy();
 
 app.use("/api/contacts", contactsRouter);
+app.use("/api", userRouter);
 
 app.use((req, res) => {
   res.status(404).json({ message: `Not found - ${req.path}` });
