@@ -21,6 +21,9 @@ const usersSchema = new Schema({
     type: String,
     default: null,
   },
+  avatarURL: {
+    type: String,
+  },
 });
 
 usersSchema.methods.setPassword = async (password) => {

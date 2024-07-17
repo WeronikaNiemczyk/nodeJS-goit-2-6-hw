@@ -1,7 +1,7 @@
 const express = require("express");
-const router = express.Router();
+const contactsRouter = express.Router();
+const userRouter = express.Router();
 const { authMiddleware } = require("../../middleware/jwt");
-
 const {
   getAllContacts,
   getContactById,
@@ -13,17 +13,25 @@ const {
   userLogin,
   userLogout,
   currentUser,
+  updateAvatar,
 } = require("../../controlers/contacts/index");
+const { upload } = require("../../public/diskStorage");
 
-router.get("/", authMiddleware, getAllContacts);
-router.get("/:contactId", authMiddleware, getContactById);
-router.post("/", authMiddleware, addContact);
-router.put("/:contactId", authMiddleware, updateContact);
-router.delete("/:contactId", authMiddleware, removeContact);
-router.patch("/:contactId/favorite", authMiddleware, addToFavorite);
-router.post("/users/signup", userSignup);
-router.post("/users/login", userLogin);
-router.get("/users/logout", authMiddleware, userLogout);
-router.get("/users/current", authMiddleware, currentUser);
+contactsRouter.get("/", authMiddleware, getAllContacts);
+contactsRouter.get("/:contactId", authMiddleware, getContactById);
+contactsRouter.post("/", authMiddleware, addContact);
+contactsRouter.put("/:contactId", authMiddleware, updateContact);
+contactsRouter.delete("/:contactId", authMiddleware, removeContact);
+contactsRouter.patch("/:contactId/favorite", authMiddleware, addToFavorite);
+userRouter.post("/users/signup", userSignup);
+userRouter.post("/users/login", userLogin);
+userRouter.get("/users/logout", authMiddleware, userLogout);
+userRouter.get("/users/current", authMiddleware, currentUser);
+userRouter.patch(
+  "/users/avatars",
+  authMiddleware,
+  upload.single("picture"),
+  updateAvatar
+);
 
-module.exports = router;
+module.exports = {contactsRouter, userRouter};
