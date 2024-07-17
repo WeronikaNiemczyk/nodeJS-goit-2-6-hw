@@ -11,6 +11,10 @@ const {
 const Users = require("../../models/users-models");
 const bcrypt = require("bcrypt");
 const gravatar = require("gravatar");
+const jimp = require("jimp");
+const path = require("path");
+const multer = require("multer");
+const fs = require("fs/promises");
 
 const schema = Joi.object({
   name: Joi.string().min(3).max(20).required(),
@@ -69,6 +73,32 @@ const userSignup = async (req, res, next) => {
     });
   } catch (err) {
     next(err);
+  }
+};
+const updateAvatar = async (req, res) => {
+  const avatarsPath = path.join(__dirname, "../public/avatars");
+  if (!req.file) {
+    return res.status(400).json({ message: "No file uploaded." });
+  }
+  console.log("avatarsPath", avatarsPath);
+  const { path: tmpPath, originalname } = req.file;
+  const { _id } = req.user;
+  console.log("tmpPath", tmpPath);
+  try {
+    const extension = originalname.split(".").pop();
+    const avatarName = `${_id}.${extension}`;
+    const resultPath = path.join(avatarsPath, avatarName);
+
+    console.log("path", resultPath);
+
+    const image = await jimp.read(tmpPath);
+    await image.resize(250, 250).writeAsync(resultPath);
+
+    const avatarURL = `/avatars/${avatarName}`;
+    await Users.findByIdAndUpdate(_id, { avatarURL });
+    res.status(200).json({ avatarURL });
+  } catch {
+    res.status(500).json({ message: error.message });
   }
 };
 
@@ -205,16 +235,9 @@ const addToFavorite = async (req, res, next) => {
   } catch (err) {
     next(err);
   }
-
-  // const userLogout = (req, res) => {
-  //   try {
-  //     res.json(ok);
-  //   } catch (err) {
-  //     next(err);
-  //   }
-  // };
 };
 module.exports = {
+  updateAvatar,
   getAllContacts,
   getContactById,
   addContact,
