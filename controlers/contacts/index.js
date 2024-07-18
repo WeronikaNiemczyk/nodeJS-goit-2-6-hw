@@ -30,6 +30,24 @@ const schemaRegister = Joi.object({
 const schemaFav = Joi.object({
   favorite: Joi.boolean().required(),
 });
+const verifyUser = async (req, res) => {
+  try {
+    const { verificationToken } = req.body;
+    const user = await Users.findOne({ verificationToken });
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    user.verificationToken = null;
+    user.verify = true;
+    await user.save();
+
+    return res.status(200).json({ message: "Verification successful" });
+  } catch (error) {
+    res.status(500).json({ message: "Server error" });
+  }
+};
 
 const currentUser = async (req, res) => {
   const user = req.user;
@@ -140,9 +158,6 @@ const userLogout = async (req, res, next) => {
   try {
     const userId = req.user._id;
     const user = await Users.findById(userId);
-    // if (!user) {
-    //   return res.status(401).json({ message: "Not authorized" });
-    // } else {
     user.token = null;
     await user.save();
     return res.status(204).send();
@@ -250,4 +265,5 @@ module.exports = {
   userLogin,
   userLogout,
   currentUser,
+  verifyUser,
 };

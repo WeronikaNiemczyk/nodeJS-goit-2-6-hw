@@ -14,6 +14,7 @@ const {
   userLogout,
   currentUser,
   updateAvatar,
+  verifyUser,
 } = require("../../controlers/contacts/index");
 const { upload } = require("../../public/diskStorage");
 
@@ -33,5 +34,12 @@ userRouter.patch(
   upload.single("picture"),
   updateAvatar
 );
+userRouter.get("/users/verify/:verificationToken", verifyUser);
 
-module.exports = {contactsRouter, userRouter};
+module.exports = { contactsRouter, userRouter };
+// try {
+//   await email("<h2>Dzień dobry<h2/>", "hello", "weronika.tlusciak@gmail.com");
+// } catch (err) {
+//   console.log(err);
+//   return next(err);
+// }
