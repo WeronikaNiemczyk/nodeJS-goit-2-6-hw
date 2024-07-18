@@ -7,21 +7,14 @@ const jimp = require("jimp");
 const path = require("path");
 const multer = require("multer");
 const fs = require("fs/promises");
+const { v4: uuidv4 } = require("uuid");
 
-const schema = Joi.object({
-  name: Joi.string().min(3).max(20).required(),
-  email: Joi.string().email({ minDomainSegments: 2 }).required(),
-  phone: Joi.string().min(9).required(),
-  favorite: Joi.boolean,
-});
 const schemaRegister = Joi.object({
   email: Joi.string().email({ minDomainSegments: 2 }).required(),
   password: Joi.string().required(),
   subscription: Joi.string(),
 });
-const schemaFav = Joi.object({
-  favorite: Joi.boolean().required(),
-});
+
 const verifyUser = async (req, res) => {
   try {
     const { verificationToken } = req.body;

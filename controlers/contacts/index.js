@@ -18,11 +18,7 @@ const schema = Joi.object({
   phone: Joi.string().min(9).required(),
   favorite: Joi.boolean,
 });
-const schemaRegister = Joi.object({
-  email: Joi.string().email({ minDomainSegments: 2 }).required(),
-  password: Joi.string().required(),
-  subscription: Joi.string(),
-});
+
 const schemaFav = Joi.object({
   favorite: Joi.boolean().required(),
 });
