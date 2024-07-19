@@ -70,13 +70,11 @@ const userSignup = async (req, res, next) => {
 
     await newUser.save();
     try {
-      // const email = await main(
-      //   `<h2>E-mail verification</h2><p>Please confirm your email address by clicking the link: <a href="http://localhost:3000/api/users/verify/${verificationToken}">Click!</a>. If you did not sign up, you can simply disregard this email.</p>`,
-      //   "Verify your e-mail",
-      //   "weronika.tlusciak@gmail.com"
-      // );
-      const email = await main();
-      console.log("email", email);
+      await main(
+        '<h1>E-mail verification</h1><p>Please confirm your email address by clicking the link:<br> <a href="http://localhost:3000/api/users/verify/${verificationToken}">Click!</a> </br> If you did not sign up, you can simply disregard this email.</p>',
+        "Verify your e-mail",
+        "werniem1234@wp.pl"
+      );
     } catch (err) {
       console.log(err);
       return next(err);
