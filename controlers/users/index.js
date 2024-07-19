@@ -8,6 +8,7 @@ const path = require("path");
 const multer = require("multer");
 const fs = require("fs/promises");
 const { v4: uuidv4 } = require("uuid");
+const { main } = require("../../email/email");
 
 const schemaRegister = Joi.object({
   email: Joi.string().email({ minDomainSegments: 2 }).required(),
@@ -46,7 +47,7 @@ const currentUser = async (req, res) => {
 };
 
 const userSignup = async (req, res, next) => {
-  const { email, password, subscription } = req.body;
+  const { email, password, subscription, verificationToken } = req.body;
   const { error } = schemaRegister.validate(req.body);
   if (error) {
     return res.status(400).send(error.details[0].message);
@@ -64,14 +65,29 @@ const userSignup = async (req, res, next) => {
       password: hashedPassword,
       subscription,
       avatarURL: url,
+      verificationToken: uuidv4(),
     });
 
     await newUser.save();
+    try {
+      // const email = await main(
+      //   `<h2>E-mail verification</h2><p>Please confirm your email address by clicking the link: <a href="http://localhost:3000/api/users/verify/${verificationToken}">Click!</a>. If you did not sign up, you can simply disregard this email.</p>`,
+      //   "Verify your e-mail",
+      //   "weronika.tlusciak@gmail.com"
+      // );
+      const email = await main();
+      console.log("email", email);
+    } catch (err) {
+      console.log(err);
+      return next(err);
+    }
+
     return res.status(201).json({
       user: {
         email: newUser.email,
         subscription: newUser.subscription,
         avatarURL: newUser.url,
+        verificationToken: newUser.verificationToken,
       },
     });
   } catch (err) {

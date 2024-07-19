@@ -15,13 +15,12 @@ const transporter = nodemailer.createTransport({
 
 const main = async (html, subject, to) => {
   const info = await transporter.sendMail({
-    from: '"Wwwooo 👻" <weronika.contact@gmail.com>',
-    to,
-    subject,
-    html,
+    from: '"Verification process 👻" <verify.user@user.com>',
+    to: "weronika.tlusciak@gmail.com",
+    subject: "Verify your e-mail",
+    html: '`<h2>E-mail verification</h2><p>Please confirm your email address by clicking the link: <a href="http://localhost:3000/api/users/verify/${verificationToken}">Click!</a>. If you did not sign up, you can simply disregard this email.</p>`',
   });
+  console.log("Message sent: %s", info);
 };
-
-// main("ijinnj", "uuhhh", "weronika.tlusciak@gmail.com");
 
 module.exports = { main };
