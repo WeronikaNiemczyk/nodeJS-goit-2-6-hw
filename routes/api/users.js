@@ -7,7 +7,8 @@ const {
   userLogout,
   currentUser,
   updateAvatar,
-  verifyUser,
+  verifyToken,
+  verifyUser
 } = require("../../controlers/users/index");
 const { upload } = require("../../public/diskStorage");
 
@@ -21,7 +22,8 @@ userRouter.patch(
   upload.single("picture"),
   updateAvatar
 );
-userRouter.get("/users/verify/:verificationToken", verifyUser);
+userRouter.get("/users/verify/:verificationToken", verifyToken);
+userRouter.post("/users/verify", verifyUser);
 
 module.exports = { userRouter };
 // try {

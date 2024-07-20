@@ -15,39 +15,8 @@ const schemaRegister = Joi.object({
   password: Joi.string().required(),
   subscription: Joi.string(),
 });
-
-const verifyUser = async (req, res) => {
-  try {
-    const { verificationToken } = req.body;
-    const user = await Users.findOne({ verificationToken });
-
-    if (!user) {
-      return res.status(404).json({ message: "User not found" });
-    }
-
-    user.verificationToken = null;
-    user.verify = true;
-    await user.save();
-
-    return res.status(200).json({ message: "Verification successful" });
-  } catch (error) {
-    res.status(500).json({ message: "Server error" });
-  }
-};
-
-const currentUser = async (req, res) => {
-  const user = req.user;
-  if (user) {
-    return res
-      .status(200)
-      .json({ email: user.email, subscription: user.subscription });
-  } else {
-    return res.status(401).json({ message: "Not authorized" });
-  }
-};
-
 const userSignup = async (req, res, next) => {
-  const { email, password, subscription, verificationToken } = req.body;
+  const { email, password, subscription } = req.body;
   const { error } = schemaRegister.validate(req.body);
   if (error) {
     return res.status(400).send(error.details[0].message);
@@ -90,6 +59,63 @@ const userSignup = async (req, res, next) => {
     });
   } catch (err) {
     next(err);
+  }
+};
+const verifyToken = async (req, res) => {
+  try {
+    const { verificationToken } = req.params;
+    const user = await Users.findOne({ verificationToken });
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    user.verify = true;
+    user.verificationToken = null;
+    await user.save();
+
+    return res.status(200).json({ message: "Verification successful" });
+  } catch (error) {
+    res.status(500).json({ message: "Server error" });
+  }
+};
+const verifyUser = async (req, res) => {
+  const { email } = req.body;
+  const { verificationToken } = req.params;
+  const user = await Users.findOne({ email });
+  const usv = user.verify;
+  console.log("usv", usv);
+  if (!email) res.status(400).json({ message: "missing required field email" });
+
+  try {
+    if (!user.verify) {
+      res.status(400).json({
+        message: "Verification has already been passed",
+        user: {
+          email: email,
+        },
+      });
+    } else {
+      await main(
+        '<h1>E-mail verification</h1><p>Please confirm your email address by clicking the link:<br> <a href="http://localhost:3000/api/users/verify/${verificationToken}">Click!</a> </br> If you did not sign up, you can simply disregard this email.</p>',
+        "Verify your e-mail",
+        "werniem1234@wp.pl"
+      );
+      res.json({ message: "Email sent" });
+    }
+  } catch (err) {
+    console.log(err);
+  }
+};
+
+const currentUser = async (req, res) => {
+  const user = req.user;
+  if (user) {
+    return res
+      .status(200)
+      .json({ email: user.email, subscription: user.subscription });
+  } else {
+    return res.status(401).json({ message: "Not authorized" });
   }
 };
 
@@ -171,5 +197,6 @@ module.exports = {
   userLogin,
   userLogout,
   currentUser,
+  verifyToken,
   verifyUser,
 };
