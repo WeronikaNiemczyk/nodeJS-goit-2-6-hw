@@ -13,15 +13,13 @@ const transporter = nodemailer.createTransport({
   },
 });
 
-const main = async (html, subject, to) => {
+const main = async (email, html) => {
   const info = await transporter.sendMail({
     from: '"Verification process 👻" <verifyuser@gmail.com>',
-    to,
-    subject,
-    html,
+    to: email,
+    subject: "Verify your e-mail",
+    html, 
   });
- 
 };
-
 
 module.exports = { main };

@@ -26,9 +26,3 @@ userRouter.get("/users/verify/:verificationToken", verifyToken);
 userRouter.post("/users/verify", verifyUser);
 
 module.exports = { userRouter };
-// try {
-//   await email("<h2>Dzień dobry<h2/>", "hello", "weronika.tlusciak@gmail.com");
-// } catch (err) {
-//   console.log(err);
-//   return next(err);
-// }

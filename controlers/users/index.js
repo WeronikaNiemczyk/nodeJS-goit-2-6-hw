@@ -29,20 +29,20 @@ const userSignup = async (req, res, next) => {
 
     const hashedPassword = await bcrypt.hash(password, 10);
     const url = gravatar.url(email, { s: "200", r: "pg", d: "404" });
+    const verificationToken = uuidv4();
     const newUser = new Users({
       email,
       password: hashedPassword,
       subscription,
       avatarURL: url,
-      verificationToken: uuidv4(),
+      verificationToken,
     });
 
     await newUser.save();
     try {
       await main(
-        '<h1>E-mail verification</h1><p>Please confirm your email address by clicking the link:<br> <a href="http://localhost:3000/api/users/verify/${verificationToken}">Click!</a> </br> If you did not sign up, you can simply disregard this email.</p>',
-        "Verify your e-mail",
-        "werniem1234@wp.pl"
+        email,
+        `<h1>E-mail verification</h1><p>Please confirm your email address by clicking the link:<br> <a href="http://localhost:3000/api/users/verify/${verificationToken}">Click!</a> </br> If you did not sign up, you can simply disregard this email.</p>`
       );
     } catch (err) {
       console.log(err);
@@ -62,8 +62,8 @@ const userSignup = async (req, res, next) => {
   }
 };
 const verifyToken = async (req, res) => {
+  const { verificationToken } = req.params;
   try {
-    const { verificationToken } = req.params;
     const user = await Users.findOne({ verificationToken });
 
     if (!user) {
@@ -83,25 +83,23 @@ const verifyUser = async (req, res) => {
   const { email } = req.body;
   const { verificationToken } = req.params;
   const user = await Users.findOne({ email });
-  const usv = user.verify;
-  console.log("usv", usv);
+
   if (!email) res.status(400).json({ message: "missing required field email" });
 
   try {
     if (!user.verify) {
+      await main(
+        email,
+        `<h1>E-mail verification</h1><p>Please confirm your email address by clicking the link:<br> <a href="http://localhost:3000/api/users/verify/${verificationToken}">Click!</a> </br> If you did not sign up, you can simply disregard this email.</p>`
+      );
+      res.json({ message: "Email sent" });
+    } else {
       res.status(400).json({
         message: "Verification has already been passed",
         user: {
           email: email,
         },
       });
-    } else {
-      await main(
-        '<h1>E-mail verification</h1><p>Please confirm your email address by clicking the link:<br> <a href="http://localhost:3000/api/users/verify/${verificationToken}">Click!</a> </br> If you did not sign up, you can simply disregard this email.</p>',
-        "Verify your e-mail",
-        "werniem1234@wp.pl"
-      );
-      res.json({ message: "Email sent" });
     }
   } catch (err) {
     console.log(err);
