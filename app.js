@@ -4,10 +4,13 @@ const cors = require("cors");
 const mongoose = require("mongoose");
 const { setJWTStrategy, jwt } = require("./config/jwt");
 const middleware = require("./middleware/jwt");
-const { contactsRouter, userRouter } = require("./routes/api/contacts");
+const { contactsRouter } = require("./routes/api/contacts");
+const { userRouter } = require("./routes/api/users");
 const diskStorage = require("./public/diskStorage");
 require("dotenv").config();
 const path = require("path");
+const indexuser = require("./controlers/users/index");
+const users = require("./routes/api/users");
 
 const { DB_HOST: urlDb } = process.env;
 const app = express();
